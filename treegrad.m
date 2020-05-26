@@ -1,4 +1,6 @@
 function supp = treegrad(s,num_layer)
+% This code is designed for generating a random tree-strctured supoort
+% with input sparsity and dimension (number of layers in a tree)
 % =========================== INPUTS ================================= %
 % 
 % s ..................... Sparsity (Assume to be well defined and >=2)
