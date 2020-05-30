@@ -17,7 +17,12 @@ while (sparsity_used < k)
             supp = [supp i];
         end
     end
-    [~,S] = max(v(supp));
+    S = supp(1);
+    for i=1:length(supp)
+        if (v(supp(i)) > v(S))
+            S = supp(i);
+        end
+    end
     parent = floor(S/2);
     if (parent == 0)
         tree(S) = min(1,(k-sparsity_used)/n(S));
@@ -27,7 +32,7 @@ while (sparsity_used < k)
             tree(S) = min(1,(k-sparsity_used)/n(S));
             sparsity_used = sparsity_used+n(S);
         else
-            
+            % Condensing part and merging part not finished
             
             
             
