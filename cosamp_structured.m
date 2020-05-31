@@ -26,6 +26,8 @@ function Sest = cosamp_structured(Phi,u,K,tol,maxiterations,c,delta)
 % Short Disclaimer: this script is for educational purpose only.
 % Longer Disclaimer see  http://igorcarron.googlepages.com/disclaimer
 
+
+% Tree-structured modified by Yuchen Lou 2020.5.30
 % Initialization
 Sest = zeros(size(Phi,2),1);
 v = u;
