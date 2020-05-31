@@ -22,10 +22,10 @@ function [val,grad] = SparseQuadric(x_in,S,D,sigma)
  
 noise = sigma*randn(1)./sqrt(D);
 b = zeros(D,1);
-b(S) = 1;
+% b(S) = 1;
 val = x_in(S)'*x_in(S) + sum(b.*x_in) + noise;
 grad = zeros(D,1);
-grad(S) = 2*x_in(S) + 1;
+grad(S) = 2*x_in(S);%+ 1;
 
 end
 
