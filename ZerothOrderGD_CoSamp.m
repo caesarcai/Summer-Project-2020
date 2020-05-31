@@ -37,7 +37,8 @@ for i = 1:num_iterations
    [f_est,true_grad] = SparseQuadric(x,S,D,noise_level);
    %gradient_norm(i) = nnz(grad_estimate);
    %sparsity = gradient_norm(i);
-   regret(i) = abs((f_est - true_min)/true_min);  % relative error
+   %regret(i) = abs((f_est - true_min)/true_min);  % relative error
+   regret(i) = abs((f_est - true_min)); % true_min = 0
    %grad_estimate(S)
    if i==1
        time_vec(i) = toc;
