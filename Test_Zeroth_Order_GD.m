@@ -30,7 +30,8 @@ x0 = randn(D,1);
 % ========================= Some additional parameters ================= %
 [~,true_grad] = SparseQuadric(x0,S,D,noise_level);
 init_grad_estimate = norm(true_grad)
-true_min = -s/4;
+%true_min = -s/4;
+true_min = 0;
 
 % ==== Run with CoSamp, high tolerance
 tol = 5e-8;%5e-2;
