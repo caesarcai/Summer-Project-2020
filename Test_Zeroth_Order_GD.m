@@ -10,6 +10,7 @@ clear, clc, close all
 
 
 % ======================== Function and Oracle Parameters ============ %
+% initialize with a tree-dimension
 num_layer = 10;
 D = 2^(num_layer)-1;
 % D = 1000; % ambient dimension
