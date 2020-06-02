@@ -64,6 +64,7 @@ while (t <= maxiterations) && (norm(v)/norm(u) > tol)
   [vals,z] = sort(B,'descend');
   Kgoodindices = find(B >= vals(K) & B > numericalprecision);
   T = T(Kgoodindices);
+  Sest = zeros(size(Phi,2),1);
   
   index = [];
   for i = 1:length(T)
@@ -76,6 +77,7 @@ while (t <= maxiterations) && (norm(v)/norm(u) > tol)
      T1 = [T1 (1+(T(i)-1)*N : N+(T(i)-1)*N)]; 
   end
   v = u - Phi(:,T1)*b;
+  Sest(T1) = b;
   
   t = t+1;
   if t == maxiterations
