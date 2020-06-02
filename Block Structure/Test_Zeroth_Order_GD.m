@@ -12,9 +12,8 @@ clear, clc, close all
 % ======================== Function and Oracle Parameters ============ %
 J = 20; N = 50;
 D = J*N;
-% D = 1000; % ambient dimension
+%D = 1000; % ambient dimension
 s = 3; % function sparsity
-s1 = s*N;
 noise_level = 0.01; % noise level
 % S = datasample(1:D,s,'Replace',false);  % randomly choose the support of ...
 % the sparse quadric.
@@ -25,8 +24,8 @@ for i = 1:length(S)
 end
 
 % ================================ ZORO Parameters ==================== %
-%num_samples = ceil(2*s*log(D));
-num_samples = ceil(s*J+s*log(N/s));
+%num_samples = ceil(2*150*log(D));
+num_samples = 10*ceil(s*J+s*log(N/s));
 num_iterations = 30;
 delta1 = 0.0005;
 step_size = 0.1;
