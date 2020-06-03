@@ -3,6 +3,8 @@
 % with FISTA and with CoSamp.
 % Daniel Mckenzie and HanQin Cai
 % 2nd July 2019 modified March/April 2020
+%
+% Embed with Tree Structure by Yuchen Lou May 2020
 % 
 % ==================================================================== %
 
@@ -10,18 +12,16 @@ clear, clc, close all
 
 
 % ======================== Function and Oracle Parameters ============ %
-% initialize with a tree-dimension
 num_layer = 10;
-D = 2^(num_layer)-1;
-% D = 1000; % ambient dimension
+D = 2^(num_layer)-1; % Tree layers and dimension
 s = 150; % function sparsity
 noise_level = 0.01; % noise level
-% S = datasample(1:D,s,'Replace',false);  % randomly choose the support of ...
-% the sparse quadric.
-S = treegrad(s,num_layer);
+S = treegrad(s,num_layer); % random tree-structured support
+% Note the support may be <= s, it's not exact
 
 % ================================ ZORO Parameters ==================== %
-num_samples = ceil(2*s*log(D));
+%num_samples = ceil(2*s*log(D));
+num_samples = 4*s; % Linear to sparsity, from Indyk 2014
 num_iterations = 30;
 delta1 = 0.0005;
 step_size = 0.1;
@@ -29,9 +29,8 @@ x0 = randn(D,1);
 
 % ========================= Some additional parameters ================= %
 [~,true_grad] = SparseQuadric(x0,S,D,noise_level);
-init_grad_estimate = norm(true_grad)
-%true_min = -s/4;
-true_min = 0;
+init_grad_estimate = norm(true_grad);
+true_min = 0; % Use objective x'Qx for simplicity
 
 % ==== Run with CoSamp, high tolerance
 tol = 5e-8;%5e-2;

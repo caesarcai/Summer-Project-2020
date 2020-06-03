@@ -1,4 +1,6 @@
 function supp = treegrad(s,num_layer)
+% Notice the function will produce a support with size <= s, which may not
+% be exactly s sparse.
 % =========================== INPUTS ================================= %
 % 
 % s ..................... Sparsity (Assume to be well defined and >=2)

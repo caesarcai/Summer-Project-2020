@@ -8,6 +8,8 @@ function Sest = cosamp_structured(Phi,u,K,tol,maxiterations,c,delta)
 %       tol : tolerance for approximation between successive solutions. 
 %   Output
 %       Sest: Solution found by the algorithm
+%       c: constant bound sparsity
+%       delta: constant control iteration number
 %
 % Algorithm as described in "CoSaMP: Iterative signal recovery from 
 % incomplete and inaccurate samples" by Deanna Needell and Joel Tropp.
@@ -26,8 +28,8 @@ function Sest = cosamp_structured(Phi,u,K,tol,maxiterations,c,delta)
 % Short Disclaimer: this script is for educational purpose only.
 % Longer Disclaimer see  http://igorcarron.googlepages.com/disclaimer
 
+% Embed Tree Structure by Yuchen Lou May 2020
 
-% Tree-structured modified by Yuchen Lou 2020.5.30
 % Initialization
 Sest = zeros(size(Phi,2),1);
 v = u;
@@ -36,11 +38,8 @@ numericalprecision = 1e-14;
 T = [];
 
 while (t <= maxiterations) && (norm(v)/norm(u) > tol)
-  y = abs(Phi'*v);
-  % Why CoSaMP got abs here?
-  
-  %[vals,z] = sort(y,'descend');
-  % Omega = find(y >= vals(2*K) & y > numericalprecision);
+  y = abs(Phi'*v); % Why abs here?
+ 
   Omega = TreeApprox(y,2*K,c,2,delta);
   T = union(Omega,T);
   %b = pinv(Phi(:,T))*u;
@@ -48,11 +47,8 @@ while (t <= maxiterations) && (norm(v)/norm(u) > tol)
   b = zeros(D,1);
   [b1,flag] = lsqr(Phi(:,T),u);
   b(T) = b1;
-  % [vals,z] = sort(abs(b),'descend');
-  % Kgoodindices = find(abs(b) >= vals(K) & abs(b) > numericalprecision);
   Kgoodindices = TreeApprox(abs(b),K,c,2,delta);
   
-  %T = T(Kgoodindices);
   T = Kgoodindices;
   Sest = zeros(size(Phi,2),1);
   b = b(Kgoodindices);
