@@ -3,6 +3,7 @@
 % with FISTA and with CoSamp.
 % Daniel Mckenzie and HanQin Cai
 % 2nd July 2019 modified March/April 2020
+% Embed with Block Structure June 2020, by Yuchen Lou
 % 
 % ==================================================================== %
 
@@ -10,22 +11,23 @@ clear, clc, close all
 
 
 % ======================== Function and Oracle Parameters ============ %
-J = 20; N = 50;
-D = J*N;
-%D = 1000; % ambient dimension
-s = 3; % function sparsity
+J = 20; N = 50; % J blocks, each dimension N
+D = J*N; % Total Dimension
+s = 3; % function sparsity (with respect to block)
 noise_level = 0.01; % noise level
-% S = datasample(1:D,s,'Replace',false);  % randomly choose the support of ...
+% randomly choose the support of ...
 % the sparse quadric.
-S = datasample(1:J,s,'Replace',false);
+S = datasample(1:J,s,'Replace',false);% randomly choose the support of ...
+% the sparse quadric (with respect to block).
+
 S1 = [];
 for i = 1:length(S)
    S1 = [S1 (N*(S(i)-1)+1 : N*(S(i)-1)+N)];
-end
+end % Transfer block sparsity support to normal support
 
 % ================================ ZORO Parameters ==================== %
 %num_samples = ceil(2*150*log(D));
-num_samples = 10*ceil(s*J+s*log(N/s));
+num_samples = 10*ceil(s*J+s*log(N/s)); % From Baraniuk 2010
 num_iterations = 30;
 delta1 = 0.0005;
 step_size = 0.1;
@@ -34,7 +36,7 @@ x0 = randn(D,1);
 % ========================= Some additional parameters ================= %
 [~,true_grad] = SparseQuadric(x0,S1,D,noise_level);
 init_grad_estimate = norm(true_grad);
-true_min = 0;
+true_min = 0; % use x'Qx for structure, b = 0, thus optimal is 0
 
 % ==== Run with CoSamp, high tolerance
 tol = 5e-8;%5e-2;

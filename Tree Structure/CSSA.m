@@ -3,6 +3,14 @@
 % function to implement CSSA algorithm from Baraniuk in 1994
 
 function tree = CSSA(x,k)
+% =========================== INPUTS ================================= %
+% x ...................... Point being approximated
+% k ...................... sparsity
+%
+% ========================== OUTPUTS ================================== %
+% 
+% tree ...................... optimal tree structure support
+
 D = length(x);
 v = x.^2;
 n = ones(1,D);
@@ -32,7 +40,7 @@ while (sparsity_used < k)
             tree(S) = min(1,(k-sparsity_used)/n(S));
             sparsity_used = sparsity_used+n(S);
         else
-            % Condensing part and merging part not finished
+            
             
             
             

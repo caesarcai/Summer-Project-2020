@@ -6,20 +6,12 @@ function [f_hat,x_hat,regret,time_vec,gradient_norm] = ZerothOrderGD_CoSamp(num_
 % Daniel Mckenzie
 % 26th June 2019
 % 
-% Some further clarification by Lou: (input)
-% x0 = initial point; step_size = alpha in algo 1; num_iterations = K in
-% algo 1
-% true_min = 
-% noise level = required for SparseQuadratic
-% S = suppose set in Sparse Quadratic; D = dimension
-% num_samples = m, number of Rademacher random vectors
-% grad_estimate = ??? Why first have a estimate
-% delta1 = beta in algo 1 (query radius parameter); tol = in cosamp
+% Embed with Tree Structure by Yuchen Lou May 2020
 
 % output
 % x_hat = minimizer; f_hat = optimal value
 % time_vec = time; gradient_norm = omitted
-% regret = |(f-f*)/f*|
+% regret = |(f-f*)|
 
 x = x0;
 regret = zeros(num_iterations,1);
@@ -31,14 +23,14 @@ sparsity = length(S);
 for i = 1:num_iterations
    tic
    %i
-   delta = delta1 * norm(grad_estimate); % What is this delta from? (From Noise free case)What's this input gra_estimate? step before update?
+   delta = delta1 * norm(grad_estimate); % What's this input grad_estimate? step before update?
    [~,grad_estimate] = CosampGradEstimate(x,num_samples,delta,S,D,noise_level,tol,sparsity);
    x = x - step_size*grad_estimate;
    [f_est,true_grad] = SparseQuadric(x,S,D,noise_level);
    %gradient_norm(i) = nnz(grad_estimate);
    %sparsity = gradient_norm(i);
    %regret(i) = abs((f_est - true_min)/true_min);  % relative error
-   regret(i) = abs((f_est - true_min)); % true_min = 0
+   regret(i) = abs((f_est - true_min)); % abs error
    %grad_estimate(S)
    if i==1
        time_vec(i) = toc;

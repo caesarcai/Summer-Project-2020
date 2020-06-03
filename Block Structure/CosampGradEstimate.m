@@ -6,16 +6,13 @@ function [function_estimate,grad_estimate] = CosampGradEstimate(x,num_samples,de
 % Daniel Mckenzie
 % 26th June 2019
 %
+% Embed with Block Structure June 2020, by Yuchen Lou
+%
 %sparsity = length(S);
-% Some further clarification
-% x = current point; delta = query radius (finite difference radius);
-% D = dimension of variable ; num_samples = m (number of samples);
-%  sigma = required for SparseQuadratic; tol = required for cosamp
-% S, sparsity some related to sparsity
+
 maxiterations = 10;
 Z =2*(rand(num_samples,D) > 0.5) - 1; % Random matrix Rademacher
 y = zeros(num_samples,1);
-%c = 1.1; delta = 0.1;
 
 % Loop for algorithm Sample in paper
 for i = 1:num_samples  % SarseQuadratic is the orcale for quadratic func

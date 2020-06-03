@@ -6,6 +6,13 @@ function VisualTree(supp,num_layer)
 % supp ...................... support set of indecies significant node
 % num_layer ................. number of layers of the tree
 % 
+% =========================== OUTPUTS ================================= %
+% A figure of binary tree
+
+% NOTICE: MATLAB gives a complete form of tree with this function if
+% num_layer <= 6. If it's >= 7, the the graph is going to be sparse and
+% only contains the significant nodes.
+
 D = 2^(num_layer) - 1; % Ambient dimension
 A = zeros(D,D);
 % Assign edge weights to parent-children relation
