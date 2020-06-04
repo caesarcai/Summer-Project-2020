@@ -1,6 +1,5 @@
 function supp = treegrad(s,num_layer)
-% Notice the function will produce a support with size <= s, which may not
-% be exactly s sparse.
+% Update: Now Exact s sparse 
 % =========================== INPUTS ================================= %
 % 
 % s ..................... Sparsity (Assume to be well defined and >=2)
@@ -16,13 +15,15 @@ function supp = treegrad(s,num_layer)
 % supp ...................... support set with a tree structure
 %
 %
-% Yuchen Lou 2020.5.23
+% Yuchen Lou 2020.5.23/ Update 2020.6.4
 %
 
 % Initialize, with the root node assumed to be non-zero for sure
 remain = s-1; % will record the sparsity remain during the loop
 parents = [1]; % will store the index of non-zero nodes in the PREVIOUS layer
 supp = [1]; % The output support set
+while (remain > 0)
+    parents = [1];
 for i = 2:num_layer
     k = min(2*length(parents),remain);
     num_thislayer = randi([1 k]);
@@ -43,13 +44,16 @@ for i = 2:num_layer
     % randomly pick "num_thislayer" children in this layer to be non-zero
     
     % Update the support set and parents set
-    supp = [supp supp_thislayer];
+    previous = length(supp);
+    supp = union(supp,supp_thislayer);
     parents = supp_thislayer;
-    remain = remain - num_thislayer;
+    remain = remain - (length(supp) - previous);
     if (remain == 0)
         break
         % break the loop if there is no sparsity left
     end
+end
+
 end
 supp = sort(supp); % sort the support
 end
