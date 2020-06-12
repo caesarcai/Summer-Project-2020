@@ -1,0 +1,17 @@
+\newcommand{\etalchar}[1]{$^{#1}$}
+\begin{thebibliography}{CLC{\etalchar{+}}18}
+
+\bibitem[CLC{\etalchar{+}}18]{cheng2018query}
+Minhao Cheng, Thong Le, Pin-Yu Chen, Jinfeng Yi, Huan Zhang, and Cho-Jui Hsieh.
+\newblock Query-efficient hard-label black-box attack: An optimization-based
+  approach.
+\newblock {\em arXiv preprint arXiv:1807.04457}, 2018.
+
+\bibitem[XLZ{\etalchar{+}}18]{xu2018structured}
+Kaidi Xu, Sijia Liu, Pu~Zhao, Pin-Yu Chen, Huan Zhang, Quanfu Fan, Deniz
+  Erdogmus, Yanzhi Wang, and Xue Lin.
+\newblock Structured adversarial attack: Towards general implementation and
+  better interpretability.
+\newblock {\em arXiv preprint arXiv:1808.01664}, 2018.
+
+\end{thebibliography}
