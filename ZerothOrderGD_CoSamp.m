@@ -6,6 +6,8 @@ function [f_hat,x_hat,regret,time_vec,gradient_norm] = ZerothOrderGD_CoSamp(num_
 % Daniel Mckenzie
 % 26th June 2019
 % 
+% Tests for different Sensing Matrices
+% 1st July 2020 Yuchen Lou
 
 x = x0;
 regret = zeros(num_iterations,1);
