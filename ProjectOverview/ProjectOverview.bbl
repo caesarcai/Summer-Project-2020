@@ -1,11 +1,29 @@
 \newcommand{\etalchar}[1]{$^{#1}$}
 \begin{thebibliography}{CLC{\etalchar{+}}18}
 
+\bibitem[CA20]{chun2020uniform}
+Il~Yong Chun and Ben Adcock.
+\newblock Uniform recovery from subgaussian multi-sensor measurements.
+\newblock {\em Applied and Computational Harmonic Analysis}, 48(2):731--765,
+  2020.
+
 \bibitem[CLC{\etalchar{+}}18]{cheng2018query}
 Minhao Cheng, Thong Le, Pin-Yu Chen, Jinfeng Yi, Huan Zhang, and Cho-Jui Hsieh.
 \newblock Query-efficient hard-label black-box attack: An optimization-based
   approach.
 \newblock {\em arXiv preprint arXiv:1807.04457}, 2018.
+
+\bibitem[TRG16]{tappenden2016inexact}
+Rachael Tappenden, Peter Richt{\'a}rik, and Jacek Gondzio.
+\newblock Inexact coordinate descent: complexity and preconditioning.
+\newblock {\em Journal of Optimization Theory and Applications},
+  170(1):144--176, 2016.
+
+\bibitem[Ver18]{vershynin2018high}
+Roman Vershynin.
+\newblock {\em High-dimensional probability: An introduction with applications
+  in data science}, volume~47.
+\newblock Cambridge university press, 2018.
 
 \bibitem[XLZ{\etalchar{+}}18]{xu2018structured}
 Kaidi Xu, Sijia Liu, Pu~Zhao, Pin-Yu Chen, Huan Zhang, Quanfu Fan, Deniz

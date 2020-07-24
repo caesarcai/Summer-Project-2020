@@ -59,9 +59,43 @@ Let's outline the scope and goals of the various projects we are pursuing this s
 
 \end{itemize}
 
+\section{Block Coordinate descent for ZORO}
+This section generalizes the previous one. Suppose again that we are solving $\text{minimize}_{x\in\mathbb{R}^{d}}$ where $d$ is extremely large. Let's assume that we have a block-diagonal sensing matrix:
+$$
+Z = \left[\begin{matrix} Z_1 & \ldots & 0 \\ \vdots & \ddots & \vdots \\ 0 & \ldots & Z_{C}\end{matrix} \right] \in \mathbb{R}^{m\times d}
+$$
+where $Z_{c}\in\mathbb{R}^{m_{c}\times d_{c}}$. 
+
+\begin{enumerate}
+	\item The blocks can either be randomly assigned or can correspond to user-specified parts of the problem. Let's assume that they are equally sized, so that $m_{c} = m/C$ and $d_{c} = d/c$. 
+	
+	\item Observe that the problem $y = Z\mathbf{g}$ decouples into problems $y_{c} = Z_{c} \mathbf{g}_{c}$ for $c = 1,\ldots, C$. 
+	
+	\item Let us assume that $\|\mathbf{g}_{c}\|_{0} \leq 1.1 s/C$, where $s = \|\mathbf{g}\|_{0}$. We can guarantee this with high probability, if the blocks are random. Alternatively we can make this a requirement that the user-specified blocks must satisfy. 
+	
+	\item In the random block case, one should have $s = \alpha d$ where $\alpha\in (0,1)$ and $C$ a fixed constant, independent of $d$. Then:
+	$$
+	\mathbb{P} \left[\|\mathbf{g}_{c}\|_{0} \leq  f(\alpha,d) s/C \right] \leq 1 - \frac{1}{d} \text{ with } f(\alpha, d) \to 0 \text{ as } d \to \infty 
+	$$
+	from Hoeffding's inequality or the Chernoff Bounds. 
+	\item Note that each $Z_{c}$ will satisfy the $1.1s/C$ RIP with high probability, as long as $m/C$ is sufficiently large. Thus CoSaMP will succesfully solve each problem:
+	\begin{equation}
+	\hat{\mathbf{g}}^{(c)} = \text{argmin}_{\mathbf{g}^{'}\in\mathbb{R}^{d_{c}}} \left\{ \|y_{c} - Z_{c}\mathbf{g}^{'}\|_{2} \text{ subject to: } \|\mathbf{g}^{'}\|_{0} \leq s_{c}\right\}
+	\label{eq:SubProblem}
+	\end{equation}
+ Note further that one could do this in parallel. 
+ 
+ \item More interestingly, one could solve \eqref{eq:SubProblem} for only one $c$. This would lead to an {\em inexact block coordinate descent scheme}: $x_{k+1} = x_{k} - \alpha \hat{\bfg}^{(c)}$, where we are abusing notation slightly by considering $\hat{\bfg}^{(c)}$ to be both a vector in $\mathbb{R}^{d_c}$ and a vector in $\mathbb{R}^{n}$ padded with zeros. 
+ 
+ \item For $x_{k+1} = x_{k} - \alpha \hat{\bfg}^{(c)}$, we must have $\alpha \leq \frac{1}{L^{(c)}}$ where $\|\nabla_{c}f(x) - \nabla_{c}f(y) \|\leq L^{(c)}\|x- y\|$.  The point is $L = \min_{c} L^{(c)}$, so coordinate descent can, in principle, take larger steps (and therefore converge faster).
+
+\item The paper \cite{tappenden2016inexact} studies this exact problem, and provides rates of convergence. 
+
+\end{enumerate}
+
 \section{Variance Reduction for ZORO}
 
-Yuchen's note sent on Friday 12th June summarizes this part quite nicely. The only thing I would add is that I think we can further exploit the structure of the error terms, $e_i = z_i^{\top}\nabla^{2}f(x)z_i$. In particular, one can use the Hanson-Wright inequality to get bounds of the form:
+Yuchen's note sent on Friday 12th June summarizes this part quite nicely. The only thing I would add is that I think we can further exploit the structure of the error terms, $e_i = z_i^{\top}\nabla^{2}f(x)z_i$. In particular, one can use the Hanson-Wright inequality (see pg. 139 of this book: \cite{vershynin2018high}) to get bounds of the form:
 $$
 \mathbb{P}\left[\left| z_i^{\top}\nabla^{2}f(x)z_i - \mathbb{E}\left[z_i^{\top}\nabla^{2}f(x)z_i\right]\right| \geq t \right] \leq e^{-ct} 
 $$
