@@ -1,4 +1,4 @@
-function [f_hat,x_hat,regret,time_vec,gradient_norm] = ZerothOrderGD_CoSamp(num_iterations,step_size,x0,true_min,S,D,noise_level,num_samples, delta1,grad_estimate,tol)
+function [f_hat,x_hat,regret,time_vec,gradient_norm] = ZerothOrderGD_CoSamp2(num_iterations,step_size,x0,true_min,S,D,noise_level,num_samples, delta1,grad_estimate,tol)
 %        [f_hat,x_hat] = ZerothOrderGD_CoSamp(num_iterations,step_size)
 % This function runs a simple Zeroth-order gradient descent for the
 % SparseQuadric function.
@@ -6,8 +6,6 @@ function [f_hat,x_hat,regret,time_vec,gradient_norm] = ZerothOrderGD_CoSamp(num_
 % Daniel Mckenzie
 % 26th June 2019
 % 
-% Tests for different Sensing Matrices
-% 1st July 2020 Yuchen Lou
 
 x = x0;
 regret = zeros(num_iterations,1);
@@ -17,7 +15,7 @@ gradient_norm = zeros(num_iterations,1);
 sparsity = length(S);
 
 % Usual Sensing
-%Z =2*(rand(num_samples,D) > 0.5) - 1;
+Z =2*(rand(num_samples,D) > 0.5) - 1;
 
 % Block Diagonal Sensing Matrix
 %Z = zeros(num_samples,D);
@@ -30,11 +28,12 @@ sparsity = length(S);
 %end
 
 % Circulant Sensing Matrix
-z1 = 2*(rand(1,D) > 0.5) - 1;
-F = dftmtx(D);
-Z1 = F*diag(F*z1(:))/F;
-SSet = datasample(1:D,num_samples,'Replace',false);
-Z = Z1(SSet,:);
+%z1 = 2*(rand(1,D) > 0.5) - 1;
+%F = dftmtx(D);
+%Z1 = F*diag(F*z1(:))/F;
+%Z1 = gallery('circul',z1);
+%SSet = datasample(1:D,num_samples,'Replace',false);
+%Z = Z1(SSet,:);
 
 for i = 1:num_iterations
    tic
