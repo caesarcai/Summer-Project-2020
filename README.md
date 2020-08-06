@@ -7,3 +7,5 @@ The folders "Block Structure" and "Tree STructure" give tests on ZORO with struc
 The folder "Sensing Matrix Tests" give tests on block diagonal sensing matrix and circulant matrix in CoSaMP.
 
 The folder "ZORO_py" is the python version of ZORO
+
+The folder "BCD Tests" give tests on block coordinate descent ZORO.
