@@ -34,7 +34,7 @@ for i = 1:num_iterations
    tic
    %i
    delta = delta1 * norm(grad_estimate);
-   [~,grad_estimate] = CosampGradEstimate(x,num_samples,delta,S,D,noise_level,tol,sparsity,Z);
+   [~,grad_estimate] = CosampGradEstimateP4(x,num_samples,delta,S,D,noise_level,tol,sparsity,Z);
    x = x - step_size*grad_estimate;
    [f_est,~] = SparseP4(x,S,D,noise_level);
    %gradient_norm(i) = nnz(grad_estimate);
