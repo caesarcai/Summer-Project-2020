@@ -25,8 +25,8 @@ num_samples = J*ceil(s*log(s)^2*log(D)^2/200); % measurements for BCD ZORO
 num_samples2 = J*ceil(s*log(s)^2*log(D)^2/200); % measurements for normal ZORO
 num_iterations = 150; % number of total iterations
 delta1 = 0.0005;
-step_size = 0.1;% Step size for BCD ZORO
-step_size2 = 0.1;% Steop size for normal ZORO
+step_size = 0.05;% Step size for BCD ZORO
+step_size2 = 0.05;% Steop size for normal ZORO
 x0 = randn(D,1);
 
 % ========================= Some additional parameters ================= %
