@@ -54,7 +54,7 @@ for i = 1:num_iterations
    x_block = x((coord_index-1)*n+1:coord_index*n);
    sparsity = length(S_block);
    
-   [~,grad_estimate_block] = CosampGradEstimate(x_block,m,delta,S_block,n,noise_level,tol,sparsity,Z1);
+   [~,grad_estimate_block] = CosampGradEstimateP4(x_block,m,delta,S_block,n,noise_level,tol,sparsity,Z1);
    grad_estimate = zeros(length(x),1);
    grad_estimate((coord_index-1)*n+1:coord_index*n) = grad_estimate_block;
    x = x - step_size*grad_estimate;
