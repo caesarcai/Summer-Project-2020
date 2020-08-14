@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{url}
+
+\usepackage{amsmath,amssymb,amsthm}
+
+\title{Note on equidistribution for block sparsity}
+\author{Daniel McKenzie}
+\date{2020}
+
+\DeclareMathOperator{\sign}{\mathrm{sign}}
+\DeclareMathOperator{\bfg}{\mathbf{g}}
+
+\begin{document}
+\maketitle
+
+Suppose that $\mathbf{g}\in\mathbb{R}^{d}$ satisfies $\|\mathbf{g}\|_0 \leq s$. Suppose further that we divide $\{1,\ldots, d\}$ into $k$ blocks, $\mathcal{I}_1,\ldots, \mathcal{I}_{C}$. For simplicity, we assume that $|\mathcal{I}_{c}| = d/C$ for all $c$. Let $g_{i_1},\ldots, g_{i_j},\ldots, g_{i_s}$ denote the non-zero entries of $\mathbf{g}$. Define the random variables $X_1,\ldots, X_j, \ldots, X_s$ as follows:
+$$
+X_j = \left\{\begin{array}{cc} 1 & \text{ if } i_j \in \mathcal{I}_1 \\ \vdots & \vdots \\ c & \text{ if } i_j \in \mathcal{I}_{c} \\ \vdots & \vdots \\ k & \text{ if } i_j \in \mathcal{I}_{C} \end{array}\right.
+$$
+We may assume that, for all $j$ and all $c$, $\mathbb{P}[X_{j} = c] = 1/C$. Now, define the random variables $Y_{c} = \# \{X_j: \ X_j = c \}$ for $c = 1,\ldots, C$. Finally, define the {\bf random vector} $\mathbf{Y} = (Y_1,\ldots, Y_{C}) \in\mathbb{R}^{C}$. Then $\mathbf{Y}$ satisfies the {\bf multinomial distribution}. Observe that $\sum_{c=1}^{C}Y_{c} = s$. \\
+
+\section{The $C = 2$ case}
+
+When $C = 2$, observe that $Y_{2} = s - Y_{1}$, {\em i.e.} $Y_{2}$ is a function of $Y_1$, so we can ignore it. In this case $Y_{1}$ is a binomial r.v.. Observe that $\mathbb{E}[Y_{1}] = 0.5s$ Now use the Chernoff Bound:
+$$
+\mathbb{P}\left[ \left|Y_{1} - 0.5s\right| \leq \delta(0.5s)\right] \leq 2\exp\left( - (0.5s)\delta^{2}/3\right)
+$$
+Observe that we now get, for free:
+$$
+\mathbb{P}\left[ \left|Y_{2} - 0.5s\right| \leq \delta(0.5s)\right] \leq 2\exp\left( - (0.5s)\delta^{2}/3\right)
+$$
+from the fact that $Y_{2} = s - Y_{1}$.
+
+\section{The general case}
+The general case will be similar. Observe that for each $Y_{c}$ individually we may derive bounds of the form:
+$$
+\mathbb{P}\left[\left| Y_{c} - s/C\right| \leq \delta(s/C)\right] \leq \epsilon
+$$
+We then use a neat trick for dealing with possibly dependent random variables called the {\bf union bound}:
+
+\begin{align}
+\mathbb{P}\left[ \exists \ c \text{ s.t. } \left| Y_{c} - s/C\right| \geq \delta(s/C)\right] & \leq \sum_{c=1}^{C}\mathbb{P}\left[ \left| Y_{c} - s/C\right| \geq \delta(s/C) \right] \\
+	& \leq C\epsilon
+\label{eq:Exists_forAll}
+\end{align}
+and so:
+\begin{align*}
+\mathbb{P}\left[ |Y_{c} - s/C| \leq \delta(s/C) \text{ for all } c\right] & = 1 - \mathbb{P}\left[ \exists \ c \text{ s.t. } \left| Y_{c} - s/C\right| \geq \delta(s/C)\right] \\
+	& \geq 1 - C\epsilon
+\end{align*}
+{\bf To Do:}
+\begin{enumerate}
+	\item Work out what $\epsilon$ needs to be, so that the bound holds with probability $1 - 1/s$. \\
+	\item We can probably improve the probability $1 - C\epsilon$ to $1 - (C-1)\epsilon$ by exploiting the fact that $Y_{C} = s - \sum_{c=1}^{C-1}Y_{c}$. 
+\end{enumerate}
+\end{document}
