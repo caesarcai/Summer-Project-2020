@@ -17,13 +17,10 @@ gradient_norm = zeros(num_iterations,1);
 %sparsity = ceil(1.5*length(S));
 sparsity = length(S);
 
-% Usual Sensing
-%Z =2*(rand(num_samples,D) > 0.5) - 1;
-
 % Block Diagonal Sensing Matrix
 Z = zeros(num_samples,D);
-m = num_samples/J;
-n = D/J;
+m = ceil(num_samples/J);
+n = ceil(D/J);
 Z1 = 2*(rand(m,n) > 0.5) - 1;
 for i = 0:(J-1)
     Z((m*i+1):(m*i+m),(n*i+1):(n*i+n)) = Z1;
@@ -33,8 +30,8 @@ end
 for i = 1:num_iterations
    tic
    %i
-   %delta = delta1 * norm(grad_estimate);
-   delta = delta1
+   delta = delta1 * norm(grad_estimate);
+   %delta = delta1
    [~,grad_estimate] = CosampGradEstimateP4(x,num_samples,delta,S,D,noise_level,tol,sparsity,Z);
    x = x - step_size*grad_estimate;
    [f_est,~] = SparseP4(x,S,D,noise_level);

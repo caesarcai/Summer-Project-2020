@@ -45,14 +45,15 @@ for i = 1:num_iterations
    %delta = delta1 * norm(grad_estimate);
    delta = delta1
    coord_index = randi(J); % randomly select a block
-   S_block = [];
-   for j = 1:length(S)
-       if S(j)>=(coord_index-1)*n+1 && S(j)<=coord_index*n
-          S_block = [S_block S(j)-n*(coord_index-1)]; 
-       end
-   end % Find significant index in the selected block
+   %S_block = [];
+   %for j = 1:length(S)
+   %    if S(j)>=(coord_index-1)*n+1 && S(j)<=coord_index*n
+   %       S_block = [S_block S(j)-n*(coord_index-1)]; 
+   %    end
+   %end % Find significant index in the selected block
    x_block = x((coord_index-1)*n+1:coord_index*n);
-   sparsity = length(S_block);
+   %sparsity = length(S_block);
+   sparsity = length(S)/
    
    [~,grad_estimate_block] = CosampGradEstimateP4(x_block,m,delta,S_block,n,noise_level,tol,sparsity,Z1);
    grad_estimate = zeros(length(x),1);
