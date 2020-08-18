@@ -80,7 +80,7 @@ if (Type == "BCD") || (Type == "BCCD")
             end
         end % Find significant index in the selected block
         x_block = x((coord_index-1)*n+1:coord_index*n);
-        sparsity = length(S_block);
+        sparsity = ceil(1.1*length(S)/J);
         
         [~,grad_estimate_block] = CosampGradEstimate(x_block,m,delta,S_block,n,noise_level,tol,sparsity,Z);
         grad_estimate = zeros(length(x),1);

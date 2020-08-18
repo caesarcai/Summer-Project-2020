@@ -73,6 +73,7 @@ if (Type == "BCD") || (Type == "BCCD")
         tic
         %i
         delta = delta1 * norm(grad_estimate);
+        %delta = 0.0005;
         
         coord_index = randi(J);% randomly select a block
         S_block = [];
@@ -82,7 +83,7 @@ if (Type == "BCD") || (Type == "BCCD")
             end
         end % Find significant index in the selected block
         x_block = x((coord_index-1)*n+1:coord_index*n);
-        sparsity = length(S_block);
+        sparsity = ceil(1.1*length(S)/J);
         
         [~,grad_estimate_block] = CosampGradEstimateP4(x_block,m,delta,S_block,n,noise_level,tol,sparsity,Z);
         grad_estimate = zeros(length(x),1);
