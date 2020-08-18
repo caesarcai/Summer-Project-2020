@@ -41,7 +41,7 @@ tol = 5e-8;%5e-2;
 % === Plot results
 figure
 hold on
-plot(ceil(num_samples*(1:num_iterations)/J),regret_COSAMP,'r*')
+plot(ceil(num_samples*(1:J*num_iterations)/J),regret_COSAMP,'r*')
 plot(num_samples2*(1:num_iterations),regret_COSAMP2,'b*')
 set(gca,'Yscale','log')
 title('Optimization Error (P4)','FontSize',16)
@@ -51,7 +51,7 @@ xlabel('Queries','FontSize',14)
 
 figure
 hold on
-plot(num_samples*(1:num_iterations),time_vec_COSAMP,'r*')
+plot(num_samples*(1:J*num_iterations),time_vec_COSAMP,'r*')
 plot(num_samples2*(1:num_iterations),time_vec_COSAMP2,'b*')
 title('Cumulative Run Time (P4)','FontSize',16)
 legend('BCD ZORO','Normal ZORO','FontSize',14)
