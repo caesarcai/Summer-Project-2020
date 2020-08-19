@@ -21,10 +21,6 @@ function [val,grad] = SparseP4(x_in,function_params)
 % August 2020
 %
 
-% =========== Unpack function_params 
-sigma = function_params.sigma;
-S = function_params.S;
-D = function_params.D;
 
 noise = sigma*randn(1)./sqrt(D);
 val = sum(x_in(S).^4) + noise;

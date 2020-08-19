@@ -38,12 +38,12 @@ true_min = 0;
 
 % ==== Run with CoSamp, high tolerance
 tol = 5e-8;%5e-2;
-[f_hat_COSAMP,x_hat_COSAMP,regret_COSAMP,time_vec_COSAMP,gradient_norm] = ZerothOrderGD_CoSamp(num_iterations,step_size,x0,true_min,S,D,noise_level,num_samples, delta1,init_grad_estimate,tol,J);
+[f_hat_COSAMP,x_hat_COSAMP,regret_COSAMP,time_vec_COSAMP,gradient_norm] = ZerothOrderGD_CoSamp(J*num_iterations,step_size,x0,true_min,S,D,noise_level,num_samples, delta1,init_grad_estimate,tol,J);
 [f_hat_COSAMP2,x_hat_COSAMP2,regret_COSAMP2,time_vec_COSAMP2,gradient_norm2] = ZerothOrderGD_CoSamp2(num_iterations,step_size2,x0,true_min,S,D,noise_level,num_samples2, delta1,init_grad_estimate,tol,J);
 % === Plot results
 figure
 hold on
-plot(num_samples/J*(1:num_iterations),regret_COSAMP,'r*')
+plot(num_samples/J*(1:J*num_iterations),regret_COSAMP,'r*')
 plot(num_samples2*(1:num_iterations),regret_COSAMP2,'b*')
 set(gca,'Yscale','log')
 title('Optimization Error','FontSize',16)
