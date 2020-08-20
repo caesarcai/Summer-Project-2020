@@ -1,6 +1,7 @@
-function [val,grad] = SparseP4(x_in,function_params)
-% Provides noisy evaluations of a sparse power 4 polynomial of the form
-% \sum x_{j_i}^4
+function [val,grad] = SparseQuadric(x_in,S,D,sigma)
+%        val = SparseQuadric(x_in)
+% Provides noisy evaluations of a sparse quadric of the form x^TQx + b^Tx
+% here b is all ones.
 %
 % =========================== INPUTS ================================= %
 % x_in ...................... Point at which to evaluate
@@ -17,19 +18,14 @@ function [val,grad] = SparseP4(x_in,function_params)
 %
 % Daniel Mckenzie
 % 26th June 2019
-% Modified by Yuchen Lou
-% August 2020
 %
-
-% =========== Unpack function_params 
-sigma = function_params.sigma;
-S = function_params.S;
-D = function_params.D;
-
+ 
 noise = sigma*randn(1)./sqrt(D);
-val = sum(x_in(S).^4) + noise;
+b = zeros(D,1);
+%b(S) = 1;
+val = x_in(S)'*x_in(S) + sum(b.*x_in) + noise;
 grad = zeros(D,1);
-grad(S) = 4*x_in(S).^3;
+grad(S) = 2*x_in(S); %+ 1;
 
 end
 

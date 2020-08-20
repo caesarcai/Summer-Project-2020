@@ -1,4 +1,4 @@
-function [val,grad] = SparseP4(x_in,function_params)
+function [val,grad] = SparseP4(x_in,S,D,sigma)
 % Provides noisy evaluations of a sparse power 4 polynomial of the form
 % \sum x_{j_i}^4
 %
@@ -20,13 +20,9 @@ function [val,grad] = SparseP4(x_in,function_params)
 % Modified by Yuchen Lou
 % August 2020
 %
-
-% =========== Unpack function_params 
-sigma = function_params.sigma;
-S = function_params.S;
-D = function_params.D;
-
+ 
 noise = sigma*randn(1)./sqrt(D);
+%b(S) = 1;
 val = sum(x_in(S).^4) + noise;
 grad = zeros(D,1);
 grad(S) = 4*x_in(S).^3;

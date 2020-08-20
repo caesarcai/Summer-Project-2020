@@ -1,14 +1,14 @@
-function [f_hat,x_hat,regret,time_vec,gradient_norm] = ZerothOrderGD_CoSampP4(num_iterations,step_size,x0,true_min,S,D,noise_level,num_samples, delta1,grad_estimate,tol,J)
+function [f_hat,x_hat,regret,time_vec,gradient_norm] = ZerothOrderGD_CoSamp(num_iterations,step_size,x0,true_min,S,D,noise_level,num_samples, delta1,grad_estimate,tol,J)
 %        [f_hat,x_hat] = ZerothOrderGD_CoSamp(num_iterations,step_size)
 % This function runs a simple Zeroth-order gradient descent for the
 % SparseQuadric function.
 % Uses CoSamp to solve the sparse recovery problem.
 % Daniel Mckenzie
 % 26th June 2019
-% Modified by Yuchen Lou, August 2020
+% Modified by Yuchen Lou in August 2020
 % 
 
-% BCD ZORO for Quartic Program
+% BCD ZORO for Quadratic Program
 
 x = x0;
 regret = zeros(num_iterations,1);
@@ -39,12 +39,13 @@ Z1 = 2*(rand(m,n) > 0.5) - 1;
 %SSet = datasample(1:D,num_samples,'Replace',false);
 %Z = Z1(SSet,:);
 
+
 for i = 1:num_iterations
    tic
    %i
-   %delta = delta1 * norm(grad_estimate);
-   delta = delta1
-   coord_index = randi(J); % randomly select a block
+   delta = delta1 * norm(grad_estimate);
+   
+   coord_index = randi(J);% randomly select a block
    S_block = [];
    for j = 1:length(S)
        if S(j)>=(coord_index-1)*n+1 && S(j)<=coord_index*n
@@ -54,11 +55,11 @@ for i = 1:num_iterations
    x_block = x((coord_index-1)*n+1:coord_index*n);
    sparsity = length(S_block);
    
-   [~,grad_estimate_block] = CosampGradEstimateP4(x_block,m,delta,S_block,n,noise_level,tol,sparsity,Z1);
+   [~,grad_estimate_block] = CosampGradEstimate(x_block,m,delta,S_block,n,noise_level,tol,sparsity,Z1);
    grad_estimate = zeros(length(x),1);
    grad_estimate((coord_index-1)*n+1:coord_index*n) = grad_estimate_block;
    x = x - step_size*grad_estimate;
-   [f_est,~] = SparseP4(x,S,D,noise_level);
+   [f_est,~] = SparseQuadric(x,S,D,noise_level);
    %gradient_norm(i) = nnz(grad_estimate);
    %sparsity = gradient_norm(i);
    %regret(i) = abs((f_est - true_min)/true_min);  % relative error
@@ -75,7 +76,7 @@ for i = 1:num_iterations
 end
 
 x_hat = x;
-[f_hat,~] = SparseP4(x_hat,S,D,0);
+[f_hat,~] = SparseQuadric(x_hat,S,D,0);
 
 end
 

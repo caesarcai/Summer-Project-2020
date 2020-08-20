@@ -23,7 +23,7 @@ sparsity = length(S);
 % Block Diagonal Sensing Matrix
 
 %Z = zeros(num_samples,D);
-m = num_samples/J; n = D/J;
+m = ceil(num_samples/J); n = D/J;
 Z1 = 2*(rand(m,n) > 0.5) - 1;
 %for i = 0:(J-1)
 %    Z((m*i+1):(m*i+m),(n*i+1):(n*i+n)) = Z1;
@@ -42,8 +42,8 @@ Z1 = 2*(rand(m,n) > 0.5) - 1;
 for i = 1:num_iterations
    tic
    %i
-   %delta = delta1 * norm(grad_estimate);
-   delta = delta1
+   delta = delta1 * norm(grad_estimate);
+   %delta = delta1
    coord_index = randi(J); % randomly select a block
    S_block = [];
    for j = 1:length(S)
@@ -52,7 +52,8 @@ for i = 1:num_iterations
        end
    end % Find significant index in the selected block
    x_block = x((coord_index-1)*n+1:coord_index*n);
-   sparsity = length(S_block);
+   %sparsity = length(S_block);
+   sparsity = ceil(1.1*length(S)/J);
    
    [~,grad_estimate_block] = CosampGradEstimateP4(x_block,m,delta,S_block,n,noise_level,tol,sparsity,Z1);
    grad_estimate = zeros(length(x),1);
