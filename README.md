@@ -12,4 +12,6 @@ The folder "BCD Tests" gives tests on block coordinate descent ZORO.
 
 The folder "Comparison" gives tests on comparison for full GD with BD, circulant and block circulant matrix, and BCD for BD and block circulant matrix.
 
+The folder "Block_ZORO" gives the newest version of all tests above.
+
 Run Test_Zeroth_Order_GD for experiments
