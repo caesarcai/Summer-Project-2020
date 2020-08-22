@@ -14,4 +14,6 @@ The folder "Comparison" gives tests on comparison for full GD with BD, circulant
 
 The folder "Block_ZORO" gives the newest version of all tests above.
 
+The folder "DWT Attack" gives test on adversarial attack by ZORO.
+
 Run Test_Zeroth_Order_GD for experiments
