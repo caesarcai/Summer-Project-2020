@@ -23,10 +23,6 @@ sparsity = cosamp_params.sparsity;
 tol = cosamp_params.tol;
 num_samples = size(Z,1);
 
-% == Unpack function_params
-sigma = function_params.sigma;
-S = function_params.S;
-D = function_params.D;
 
 y = zeros(num_samples,1);
 function_estimate = 0;
