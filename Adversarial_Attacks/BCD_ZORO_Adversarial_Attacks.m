@@ -1,4 +1,4 @@
-function [x_hat,f_vals,time_vec,gradient_norm,num_samples_vec,I_attack,iter] = Block_ZORO(function_handle,function_params,ZORO_params)
+function [Attacking_Noise, Attacked_image, f_vals, iter, num_samples_vec] = BCD_ZORO_Adversarial_Attacks(function_handle,function_params,ZORO_params)
 
 % Basic Implementation of ZORO with flexible sensing matrix.
 % ======================== INPUTS ================================= %
@@ -20,70 +20,28 @@ function [x_hat,f_vals,time_vec,gradient_norm,num_samples_vec,I_attack,iter] = B
 % Daniel McKenzie 2019, Yuchen Lou 2020
 %
 
-if isempty(ZORO_params.x0)
-    error('Initial value, x0, is missing from ZORO_params')
-else
-    x = ZORO_params.x0;
-end
+D = ZORO_params.D;
+sparsity = ZORO_params.sparsity;
+num_iterations = ZORO_params.num_iterations;
+Type = ZORO_params.Type;
+delta1 = ZORO_params.delta1;
+grad_estimate = ZORO_params.init_grad_estimate;
+x = ZORO_params.x0;
+step_size = ZORO_params.step_size;
+max_time = ZORO_params.max_time;
 
-if isempty(ZORO_params.Type)
-    error('Type of sensing matrix, ZORO_params.Type, is missing. Options are ..')
-else
-    Type = ZORO_params.Type;
-end
-
-if isempty(ZORO_params.sparsity)
-    error('sparsity value for gradients, ZORO_params.sparsity, is missing')
-else
-    sparsity = ZORO_params.sparsity;
-end
-
-if isempty(ZORO_params.delta1)
-    error('parameter delta1 is missing')
-else
-    delta1 = ZORO_params.delta1;
-end
-
-if isempty(ZORO_params.init_grad_estimate)
-    grad_estimate = 100;
-else
-    grad_estimate = ZORO_params.init_grad_estimate;
-end
-
-if isempty(ZORO_params.num_iterations)
-    num_iterations = 100;
-else
-    num_iterations = ZORO_params.num_iterations;
-end
-
-if isempty(ZORO_params.step_size)
-    step_size = 1e-3;
-else
-    step_size = ZORO_params.step_size;
-end
-
-if isempty(ZORO_params.max_time)
-    max_time = 1e5;
-else
-    max_time = ZORO_params.max_time;
-end
-
-D = length(x);
-I_attack = 0;
 iter = num_iterations;
-
 
 % =========== Initialize some vectors
 f_vals = zeros(num_iterations,1);
 time_vec = zeros(num_iterations,1);
-gradient_norm = zeros(num_iterations,1);
 
 % hard coding the following for now, can make a param. later if we want.
-num_samples = ceil(sparsity*log(D))
-cosamp_params.maxiterations = 10;
-cosamp_params.tol = 1e-4;
+num_samples = ceil(4*sparsity*log(D));
+cosamp_params.maxiterations = 500;
+cosamp_params.tol = 1e-2;
 cosamp_params.sparsity = sparsity;
-oversampling_param = 1.5;
+oversampling_param = 1;
 
 % ========== Initialize the sensing matrix
 
@@ -106,7 +64,8 @@ else  % This handles block methods.
     else
         J = ZORO_params.num_blocks;
     end
-    samples_per_block = ceil(oversampling_param*num_samples/J); block_size = D/J;
+    samples_per_block = ceil(oversampling_param*num_samples/J);
+    block_size = ceil(D/J);
     if (Type == "FullBD")
         Z = zeros(num_samples,D);
         Z1 = 2*(rand(samples_per_block,block_size) > 0.5) - 1;
@@ -124,7 +83,8 @@ else  % This handles block methods.
             Z((samples_per_block*i+1):(samples_per_block*i+samples_per_block),(block_size*i+1):(block_size*i+block_size)) = Z2;
         end
     else  % This handles the block coordinate descent methods.
-        sparsity = ceil(oversampling_param*sparsity/J); % upper bound on sparsity per block.
+        sparsity = ceil(oversampling_param*sparsity/J) % upper bound on sparsity per block.
+        samples_per_block = ceil(2*sparsity)
         cosamp_params.sparsity = sparsity;
         
         if (Type == "BCD")
@@ -152,12 +112,31 @@ if (Type == "BCD") || (Type == "BCCD")  % block coordinate descent methods.
         %i
         cosamp_params.delta = delta1 * norm(grad_estimate);
         coord_index = randi(J);% randomly select a block
-        block = [(coord_index-1)*block_size + 1:coord_index*block_size];
+        block = datasample(1:function_params.D,block_size,'Replace',false);
+        %block = [(coord_index-1)*block_size + 1:coord_index*block_size];
+        %block = (i-1)*block_size + 1:i*block_size;
+        %block = function_params.D - i*block_size+1 :function_params.D - (i-1)*block_size;
         cosamp_params.block = block;
         [f_est,grad_estimate] = BlockCosampGradEstimate(function_handle,x,cosamp_params,function_params);
+        grad_estimate(grad_estimate ~=0)
         x = x - step_size*grad_estimate;
+         % Box Constraint
+        x(x > function_params.epsilon) = function_params.epsilon;
+        x(x < -function_params.epsilon) = -function_params.epsilon;
+        x(x~= 0)
         f_vals(i) = f_est;
+        %x(1:1e4) = rand(1e4,1);
+        Attacking_Noise = waverec2(x,function_params.shape,function_params.transform);
+        figure, imshow(10*Attacking_Noise);
+        Attacked_image = function_params.target_image + Attacking_Noise;
+        figure, imshow(Attacked_image)
         num_samples_vec(i) = samples_per_block;
+        [~,new_label] = ImageEvaluate(x,function_params)
+        if new_label ~= function_params.label
+                iter = i;
+                disp('Attack succesful')
+                break
+        end
         if i==1
             time_vec(i) = toc;
         else
@@ -223,7 +202,7 @@ else
                 time_vec = time_vec(time_vec ~=0);
                 num_samples_vec = num_samples_vec(num_samples_vec~=0);
                 disp('Max time reached!')
-                return
+                break
             end
         else
             cosamp_params.delta = delta1 * norm(grad_estimate);
@@ -252,8 +231,5 @@ else
     end
     
 end
-
-I_attack = I_attack/255;
-x_hat = x;
 end
 

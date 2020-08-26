@@ -1,6 +1,6 @@
-function [x_hat,f_vals,time_vec,gradient_norm,num_samples_vec] = Block_ZORO(function_handle,function_params,ZORO_params)
+function [x_hat,f_vals,time_vec,gradient_norm,num_samples_vec,I_attack,iter] = Block_ZORO_PD(function_handle,function_params,ZORO_params)
 
-% Basic Implementation of ZORO with flexible sensing matrix. 
+% Basic Implementation of ZORO with flexible sensing matrix.
 % ======================== INPUTS ================================= %
 % function_handle .......... name of oracle function.
 % function_params .......... any parameters required by function
@@ -14,19 +14,21 @@ function [x_hat,f_vals,time_vec,gradient_norm,num_samples_vec] = Block_ZORO(func
 % iteration.
 % gradient_norm ............ vec containing ||g_k|| for all k.
 % num_samples_vec .......... number of samples made at iteration k
-% 
+% I_attack ................. image after the attack
+% iter ..................... number of iteration for a successful attack
+%
 % Daniel McKenzie 2019, Yuchen Lou 2020
-% 
+%
 
 if isempty(ZORO_params.x0)
     error('Initial value, x0, is missing from ZORO_params')
-else 
+else
     x = ZORO_params.x0;
 end
-    
+
 if isempty(ZORO_params.Type)
     error('Type of sensing matrix, ZORO_params.Type, is missing. Options are ..')
-else 
+else
     Type = ZORO_params.Type;
 end
 
@@ -67,17 +69,19 @@ else
 end
 
 D = length(x);
+I_attack = 0;
+iter = num_iterations;
 
 
-% =========== Initialize some vectors 
+% =========== Initialize some vectors
 f_vals = zeros(num_iterations,1);
 time_vec = zeros(num_iterations,1);
 gradient_norm = zeros(num_iterations,1);
 
 % hard coding the following for now, can make a param. later if we want.
-num_samples = 4*sparsity; 
-cosamp_params.maxiterations = ZORO_params.cosamp_max_iter;
-cosamp_params.tol = 0.5;
+num_samples = ceil(sparsity*log(D))
+cosamp_params.maxiterations = 10;
+cosamp_params.tol = 1e-4;
 cosamp_params.sparsity = sparsity;
 oversampling_param = 1.5;
 
@@ -89,10 +93,10 @@ if (Type == "Full")
 elseif (Type == "FullCirculant")
     % Circulant Sensing Matrix
     z1 = 2*(rand(1,D) > 0.5) - 1;
-
+    
     %F = dftmtx(D); % with FFT
     %Z1 = F*diag(F*z1(:))/F;
-
+    
     Z1 = gallery('circul',z1); % without FFT
     SSet = datasample(1:D,num_samples,'Replace',false);
     Z = Z1(SSet,:);
@@ -122,11 +126,11 @@ else  % This handles block methods.
     else  % This handles the block coordinate descent methods.
         sparsity = ceil(oversampling_param*sparsity/J); % upper bound on sparsity per block.
         cosamp_params.sparsity = sparsity;
-    
+        
         if (Type == "BCD")
             % Block Rademacher Coordinate Descent
             Z = 2*(rand(samples_per_block,block_size) > 0.5) - 1;
-
+            
         elseif (Type == "BCCD")
             % Block Circulant Coordinate Descent
             z1 = 2*(rand(1,block_size) > 0.5) -1;
@@ -139,8 +143,8 @@ end
 
 cosamp_params.Z = Z;
 % ========== Now do ZORO
-        
-       
+
+
 if (Type == "BCD") || (Type == "BCCD")  % block coordinate descent methods.
     
     for i = 1:num_iterations
@@ -177,32 +181,69 @@ else
     for i = 1:num_iterations
         tic
         %i
-        cosamp_params.delta = delta1 * norm(grad_estimate);
-        [f_est,grad_estimate] = CosampGradEstimate(function_handle,x,cosamp_params,function_params);
-        x = x - step_size*grad_estimate;
-        f_vals(i) = f_est;
-        num_samples_vec(i) = num_samples;
-        if i==1
-            time_vec(i) = toc;
+        if function_handle == "ImageEvaluate_PixelDomain"
+            cosamp_params.delta = delta1 * norm(grad_estimate);
+            [f_est,grad_estimate] = CosampGradEstimate(function_handle,x,cosamp_params,function_params);
+            x = x - step_size*grad_estimate;
+            % Box Constraint
+            x(x > function_params.epsilon) = function_params.epsilon;
+            x(x < -function_params.epsilon) = -function_params.epsilon;
+            
+            f_vals(i) = f_est;
+            num_samples_vec(i) = num_samples;
+            if i==1
+                time_vec(i) = toc;
+            else
+                time_vec(i) = time_vec(i-1) + toc;
+            end
+            label = classify(function_params.net, I_attack)
+            if label ~= function_params.label
+                iter = i;
+                disp('Attack succesful')
+                break
+            end
+            
+            if sparsity == 0
+                break
+            end
+            if time_vec(i) >= max_time
+                x_hat = x;
+                % if max_time is reached, trim arrays by removing zeros
+                f_vals = f_vals(f_vals ~= 0);
+                time_vec = time_vec(time_vec ~=0);
+                num_samples_vec = num_samples_vec(num_samples_vec~=0);
+                disp('Max time reached!')
+                return
+            end
         else
-            time_vec(i) = time_vec(i-1) + toc;
-        end
-        if sparsity == 0
-            break
-        end
-        if time_vec(i) >= max_time
-            x_hat = x;
-            % if max_time is reached, trim arrays by removing zeros
-            f_vals = f_vals(f_vals ~= 0);
-            time_vec = time_vec(time_vec ~=0);
-            num_samples_vec = num_samples_vec(num_samples_vec~=0);
-            disp('Max time reached!')
-            return
+            cosamp_params.delta = delta1 * norm(grad_estimate);
+            [f_est,grad_estimate] = CosampGradEstimate(function_handle,x,cosamp_params,function_params);
+            x = x - step_size*grad_estimate;
+            f_vals(i) = f_est;
+            num_samples_vec(i) = num_samples;
+            if i==1
+                time_vec(i) = toc;
+            else
+                time_vec(i) = time_vec(i-1) + toc;
+            end
+            if sparsity == 0
+                break
+            end
+            if time_vec(i) >= max_time
+                x_hat = x;
+                % if max_time is reached, trim arrays by removing zeros
+                f_vals = f_vals(f_vals ~= 0);
+                time_vec = time_vec(time_vec ~=0);
+                num_samples_vec = num_samples_vec(num_samples_vec~=0);
+                disp('Max time reached!')
+                return
+            end
         end
     end
     
 end
 
+I_attack = I_attack/255;
 x_hat = x;
 end
 
