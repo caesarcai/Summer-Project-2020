@@ -79,7 +79,7 @@ time_vec = zeros(num_iterations,1);
 gradient_norm = zeros(num_iterations,1);
 
 % hard coding the following for now, can make a param. later if we want.
-num_samples = ceil(sparsity*log(D));
+num_samples = ceil(sparsity*log(D))
 cosamp_params.maxiterations = 10;
 cosamp_params.tol = 1e-4;
 cosamp_params.sparsity = sparsity;
@@ -190,8 +190,8 @@ else
             [f_est,grad_estimate] = CosampGradEstimate(function_handle,x,cosamp_params,function_params);
             x = x - step_size*grad_estimate;
             % Box Constraint
-            %x(x > function_params.epsilon) = function_params.epsilon;
-            %x(x < -function_params.epsilon) = -function_params.epsilon;
+            x(x > function_params.epsilon) = function_params.epsilon;
+            x(x < -function_params.epsilon) = -function_params.epsilon;
             
             f_vals(i) = f_est;
             num_samples_vec(i) = num_samples;
@@ -204,11 +204,12 @@ else
             for j = 1:length(S)
                 c2(S(j)) = c2(S(j)) + x(j);
             end
-            I_attack = waverec2(c2,function_params.shape,'haar');
+            I_attack = waverec2(c2,function_params.shape,'db9');
             I_attack = I_attack*255;
-            label = classify(function_params.net, I_attack);
+            label = classify(function_params.net, I_attack)
             if label ~= function_params.label
                 iter = i;
+                disp('Attack succesful')
                 break
             end
             
@@ -252,6 +253,7 @@ else
     
 end
 
+I_attack = I_attack/255;
 x_hat = x;
 end
 

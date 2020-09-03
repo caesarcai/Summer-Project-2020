@@ -76,8 +76,8 @@ gradient_norm = zeros(num_iterations,1);
 
 % hard coding the following for now, can make a param. later if we want.
 num_samples = 4*sparsity; 
-cosamp_params.maxiterations = 10;
-cosamp_params.tol = 1e-4;
+cosamp_params.maxiterations = ZORO_params.cosamp_max_iter;
+cosamp_params.tol = 0.5;
 cosamp_params.sparsity = sparsity;
 oversampling_param = 1.5;
 

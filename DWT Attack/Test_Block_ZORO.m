@@ -28,7 +28,8 @@ ZORO_params.num_blocks = 5;
 function_handle = "ImageEvaluate";
 
 % ====================== Run Full ZORO ====================== %
-dirPath = 'C:\Users\User\Desktop\Inception Attack\test2'; %Path to tested images
+dirPath = cd; %Path to tested images
+dirPath = fullfile(dirPath,'imgs_test')
 filelist = dir(fullfile(dirPath,'**\*.JPEG'));
 
 level = 1; % DWT level
