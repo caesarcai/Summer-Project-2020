@@ -118,15 +118,17 @@ if (Type == "BCD") || (Type == "BCCD")  % block coordinate descent methods.
         %block = function_params.D - i*block_size+1 :function_params.D - (i-1)*block_size;
         cosamp_params.block = block;
         [f_est,grad_estimate] = BlockCosampGradEstimate(function_handle,x,cosamp_params,function_params);
-        grad_estimate(grad_estimate ~=0)
         x = x - step_size*grad_estimate;
          % Box Constraint
         x(x > function_params.epsilon) = function_params.epsilon;
         x(x < -function_params.epsilon) = -function_params.epsilon;
-        x(x~= 0)
         f_vals(i) = f_est;
         %x(1:1e4) = rand(1e4,1);
-        Attacking_Noise = waverec2(x,function_params.shape,function_params.transform);
+        if function_params.transform == 'None'
+            Attacking_Noise = reshape(x,function_params.shape);
+        else
+            Attacking_Noise = waverec2(x,function_params.shape,function_params.transform);
+        end
         figure, imshow(10*Attacking_Noise);
         Attacked_image = function_params.target_image + Attacking_Noise;
         figure, imshow(Attacked_image)
