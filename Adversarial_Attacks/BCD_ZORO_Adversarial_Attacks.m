@@ -124,7 +124,7 @@ if (Type == "BCD") || (Type == "BCCD")  % block coordinate descent methods.
         x(x < -function_params.epsilon) = -function_params.epsilon;
         f_vals(i) = f_est;
         %x(1:1e4) = rand(1e4,1);
-        if function_params.transform == 'None'
+        if function_params.transform == "None"
             Attacking_Noise = reshape(x,function_params.shape);
         else
             Attacking_Noise = waverec2(x,function_params.shape,function_params.transform);
