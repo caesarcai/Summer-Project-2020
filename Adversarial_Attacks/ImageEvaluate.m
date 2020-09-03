@@ -19,7 +19,7 @@ function [val, label] = ImageEvaluate(x,function_params)
 
 Target_image = function_params.target_image;
 
-if function_params.transform == 'None'
+if function_params.transform == "None"
     Perturbation = reshape(x,function_params.shape);
 else
     Perturbation = waverec2(x,function_params.shape,function_params.transform);
