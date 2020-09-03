@@ -36,7 +36,7 @@ label
 
 
 % ================== No transform: pixel domain attack ================ %
-function_params.transform = 'None';
+function_params.transform = "None";
 function_params.shape = size(target_image);
 function_params.D = length(target_image(:));
 ZORO_params.D = function_params.D;
