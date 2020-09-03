@@ -8,13 +8,13 @@
 clear, clc, close all;
 
 % == Get inception v3
-function_params.net = inceptionv3();
+function_params.net = squeezenet();
 sz = function_params.net.Layers(1).InputSize;
 function_params.kappa = 0;
 
 % == Get picture
 pictures = dir('imgs_test');
-test_file = fullfile(cd,'imgs_test', pictures(20).name);
+test_file = fullfile(cd,'imgs_test', pictures(57).name);
 Target_image = imread(test_file);
 Target_image = imresize(Target_image, sz(1:2)); % resize for inception v3
 Target_image = double(Target_image)/255;
@@ -38,8 +38,8 @@ function_params.transform = 'db4';
 
 % == Create a large, random, sparse perturbation
 xi = zeros(1,function_params.D);
-S = datasample(1:function_params.D,1e4,'Replace',false);
-xi(S) = rand(1,1e4);
+S = datasample(1:function_params.D,1e2,'Replace',false);
+xi(S) = rand(1,1e2);
 Perturbation = waverec2(xi,function_params.shape,function_params.transform);
 figure, imshow(Perturbation)
 

@@ -11,11 +11,11 @@ clear, close all, clc
 ZORO_params.num_iterations = 100; % number of iterations
 ZORO_params.delta1 = 0.0005;
 ZORO_params.step_size = 0.1;% Step size
-ZORO_params.max_time = 100;
+ZORO_params.max_time = 300;
 function_handle = "SparseQuadric";
 
 % ========================= Initialize arrays ====================== %
-num_tests = 30;
+num_tests = 35;
 final_val_full = zeros(num_tests,1);
 final_val_full_circulant = zeros(num_tests,1);
 final_val_fullBD = zeros(num_tests,1);
@@ -67,20 +67,20 @@ for i = 1:num_tests
     
 end
 
-save('Time_Block_ZORO_results_3.mat')
-% num_completed_trails = 30;
-% Problem_sizes = 1000 + 1000*[1:num_completed_trails];
-% 
-% 
-% semilogy(Problem_sizes, final_val_full(1:num_completed_trails),'rs')
-% hold on
-% semilogy(Problem_sizes, final_val_full_circulant(1:num_completed_trails),'r*')
-% semilogy(Problem_sizes, final_val_fullBC(1:num_completed_trails),'b*')
-% semilogy(Problem_sizes, final_val_fullBD(1:num_completed_trails),'k*')
-% semilogy(Problem_sizes, final_val_BCD(1:num_completed_trails),'ro')
-% semilogy(Problem_sizes, final_val_BCCD(1:num_completed_trails),'bo')
-% legend({'Full','Full Circulant', 'Full Block Diagonal', 'Full Block Circ. Diag','Block. Coord.','Block Circ. Coord.'})
-%     
-%     
+save('Time_Block_ZORO_results_4.mat')
+num_completed_trails = 30;
+Problem_sizes = 1000 + 1000*[1:num_completed_trails];
+
+
+semilogy(Problem_sizes, final_val_full(1:num_completed_trails),'rs')
+hold on
+semilogy(Problem_sizes, final_val_full_circulant(1:num_completed_trails),'r*')
+semilogy(Problem_sizes, final_val_fullBC(1:num_completed_trails),'b*')
+semilogy(Problem_sizes, final_val_fullBD(1:num_completed_trails),'k*')
+semilogy(Problem_sizes, final_val_BCD(1:num_completed_trails),'ro')
+semilogy(Problem_sizes, final_val_BCCD(1:num_completed_trails),'bo')
+legend({'Full','Full Circulant', 'Full Block Diagonal', 'Full Block Circ. Diag','Block. Coord.','Block Circ. Coord.'})
+savefig('Time_Block_ZORO_plot_4')
+    
     
 

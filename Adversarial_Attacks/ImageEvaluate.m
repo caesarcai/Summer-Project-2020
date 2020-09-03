@@ -18,7 +18,12 @@ function [val, label] = ImageEvaluate(x,function_params)
 % NB: x is now the perturbation, not the original image.
 
 Target_image = function_params.target_image;
-Perturbation = waverec2(x,function_params.shape,function_params.transform);
+
+if function_params.transform == 'None'
+    Perturbation = reshape(x,function_params.shape);
+else
+    Perturbation = waverec2(x,function_params.shape,function_params.transform);
+end
 
 % === Rescale image to 0--255, to feed into inception.
 Perturbed_image = (Target_image + Perturbation)*255;
@@ -31,5 +36,5 @@ if (idx(1) == function_params.true_id)
 else
     f_Ntru = scores(idx(1));
 end
-val = max(-function_params.kappa, f_tru - f_Ntru);
+val = max(-function_params.kappa, log(f_tru) - log(f_Ntru));
 end
