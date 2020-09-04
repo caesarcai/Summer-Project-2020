@@ -40,6 +40,7 @@ if isnan(function_params.target_id)
 else
     f_Ntru = scores(function_params.target_id);
 end
+%val = -log(f_Ntru); % Targeted attack objective version
 val = max(-function_params.kappa, log(f_tru) - log(f_Ntru));
 %val = max(-function_params.kappa, f_tru - f_Ntru);
 end
