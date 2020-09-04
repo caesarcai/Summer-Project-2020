@@ -83,8 +83,8 @@ else  % This handles block methods.
             Z((samples_per_block*i+1):(samples_per_block*i+samples_per_block),(block_size*i+1):(block_size*i+block_size)) = Z2;
         end
     else  % This handles the block coordinate descent methods.
-        sparsity = ceil(oversampling_param*sparsity/J) % upper bound on sparsity per block.
-        samples_per_block = ceil(2*sparsity)
+        sparsity = ceil(oversampling_param*sparsity/J); % upper bound on sparsity per block.
+        samples_per_block = ceil(2*sparsity);
         cosamp_params.sparsity = sparsity;
         
         if (Type == "BCD")
@@ -113,13 +113,14 @@ if (Type == "BCD") || (Type == "BCCD")  % block coordinate descent methods.
         cosamp_params.delta = delta1 * norm(grad_estimate);
         coord_index = randi(J);% randomly select a block
         block = datasample(1:function_params.D,block_size,'Replace',false);
+        %block = datasample(1:5000,block_size,'Replace',false);
         %block = [(coord_index-1)*block_size + 1:coord_index*block_size];
         %block = (i-1)*block_size + 1:i*block_size;
         %block = function_params.D - i*block_size+1 :function_params.D - (i-1)*block_size;
         cosamp_params.block = block;
         [f_est,grad_estimate] = BlockCosampGradEstimate(function_handle,x,cosamp_params,function_params);
         x = x - step_size*grad_estimate;
-         % Box Constraint
+        % Box Constraint
         x(x > function_params.epsilon) = function_params.epsilon;
         x(x < -function_params.epsilon) = -function_params.epsilon;
         f_vals(i) = f_est;
@@ -129,15 +130,24 @@ if (Type == "BCD") || (Type == "BCCD")  % block coordinate descent methods.
         else
             Attacking_Noise = waverec2(x,function_params.shape,function_params.transform);
         end
-        figure, imshow(10*Attacking_Noise);
+        %figure, imshow(10*Attacking_Noise);
         Attacked_image = function_params.target_image + Attacking_Noise;
-        figure, imshow(Attacked_image)
+        %figure, imshow(Attacked_image)
         num_samples_vec(i) = samples_per_block;
-        [~,new_label] = ImageEvaluate(x,function_params)
-        if new_label ~= function_params.label
+        [~,new_label] = ImageEvaluate(x,function_params);
+        disp(new_label);
+        if isnan(function_params.target_id)
+            if new_label ~= function_params.label
                 iter = i;
                 disp('Attack succesful')
                 break
+            end
+        else
+            if new_label == function_params.target_label
+                iter = i;
+                disp('Attack succesful')
+                break
+            end
         end
         if i==1
             time_vec(i) = toc;

@@ -33,12 +33,10 @@ Z_padded(:,block) = Z;
 
 
 y = zeros(num_samples,1);
-function_estimate = 0;
-
+[y_temp2,~] = feval(function_handle,x,function_params); % query at f(x)
+function_estimate = y_temp2;
 for i = 1:num_samples
     [y_temp1,~] = feval(function_handle,x + delta*Z_padded(i,:)',function_params); % query at f(x+delta z_i)
-    [y_temp2,~] = feval(function_handle,x,function_params); % query at f(x)
-    function_estimate = function_estimate + y_temp2;
     y(i) = (y_temp1-y_temp2)/(sqrt(num_samples)*delta); % finite difference approximation to directional derivative.
 end
 
@@ -47,5 +45,5 @@ Z = Z/sqrt(num_samples);
 block_grad_estimate = cosamp(Z,y,sparsity,tol,maxiterations);
 grad_estimate = zeros(dim,1);
 grad_estimate(block) = block_grad_estimate;
-function_estimate = function_estimate/num_samples;
+%function_estimate = function_estimate/num_samples;
 end

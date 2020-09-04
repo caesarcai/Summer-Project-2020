@@ -31,10 +31,15 @@ Perturbed_image = (Target_image + Perturbation)*255;
 [label,scores] = classify(function_params.net,Perturbed_image);
 [~,idx] = sort(scores,'descend');
 f_tru = scores(function_params.true_id);
-if (idx(1) == function_params.true_id)
-    f_Ntru = scores(idx(2));
+if isnan(function_params.target_id)
+    if (idx(1) == function_params.true_id)
+        f_Ntru = scores(idx(2));
+    else
+        f_Ntru = scores(idx(1));
+    end
 else
-    f_Ntru = scores(idx(1));
+    f_Ntru = scores(function_params.target_id);
 end
 val = max(-function_params.kappa, log(f_tru) - log(f_Ntru));
+%val = max(-function_params.kappa, f_tru - f_Ntru);
 end
